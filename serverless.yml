@@ -20,13 +20,38 @@ provider:
   # the following line. Also, make sure to not
   # commit your .env.
   #
-  #environment:
+  environment:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
+    tableName: products
+
+iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:us-west-2:*:*"
 
 functions:
-  hello:
-    handler: handler.hello
+  # Defines an HTTP API endpoint that calls the main function in create.js
+  # - path: url path is /notes
+  # - method: POST request
+  create:
+    handler: create.main
     events:
       - http:
-          path: hello
+          path: products
+          method: post
+  get:
+    # Defines an HTTP API endpoint that calls the main function in get.js
+    # - path: url path is /notes/{id}
+    # - method: GET request
+    handler: get.main
+    events:
+      - http:
+          path: products/{id}
           method: get
